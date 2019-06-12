@@ -10,7 +10,6 @@ class currconv extends Component {
         loading:true,
         isOpen: false,
         currency:[],
-        tmp:[],
         changevalue:100,
         changecurrency:"USD",
         currencytoconvert:"USD",
@@ -38,9 +37,6 @@ class currconv extends Component {
         axios.get(url).then(
             (res)=>{
                 this.setState({currency: res.data});
-                let tmp;
-                //res.data.map((currency, key) =>(currency));
-              
                
             },
             
@@ -56,7 +52,6 @@ class currconv extends Component {
 
      onChangeCurrencyInput(e) {
         let value=e.target.value;
-        console.log(value);
         this.setState({
           changevalue: value,
         
@@ -68,7 +63,6 @@ class currconv extends Component {
 
         onChangeSelectCurrency(e) {
             let {name, value} = e.target;
-            console.log(value);
             this.setState({
               changecurrency: value
             
@@ -79,7 +73,6 @@ class currconv extends Component {
 
             CurrencyNameToConvert(e) {
                 let {name, value} = e.target;
-                console.log(value);
                 this.setState({
                     currencytoconvert: value
                 
@@ -95,21 +88,20 @@ class currconv extends Component {
              let convertvalue=this.state.changevalue;
              let changecurrency=this.state.changecurrency;
              let currencytoconvert=this.state.currencytoconvert;
-            
              let convertedvalue=(convertvalue*currencyarr.find(x => x.cc === changecurrency).rate)/currencyarr.find(x => x.cc === currencytoconvert).rate;
-             this.setState({result:convertedvalue});
+             this.setState({result: parseInt( convertedvalue)});
             
             }
     render() { 
     
-     console.log(this.currency);
+
       return(
             <div className="container">
 
                 <div className="row justify-content-center">
                     <div>
                         <h6>Change:</h6>
-                        <input type="number" value={this.state.changevalue} onChange={this.onChangeCurrencyInput} ></input>
+                        <input type="number" min="1" value={this.state.changevalue} onChange={this.onChangeCurrencyInput} ></input>
 
                     </div>
 
@@ -120,7 +112,7 @@ class currconv extends Component {
                         </select>
                     </div>
 
-                    {/* <i className="fa-angle-double-right"></i> */}
+                  
                    
                   
 
@@ -140,7 +132,7 @@ class currconv extends Component {
 
 
                 <div style={{marginTop:"4rem"}} className="row justify-content-center">
-                    <button onClick={this.Convert}>Get result</button>
+                    <button onClick={this.Convert} className="btn btn-success">Get result</button>
                 </div>
 
             </div>
