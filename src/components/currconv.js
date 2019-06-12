@@ -62,7 +62,7 @@ class currconv extends Component {
 
 
         onChangeSelectCurrency(e) {
-            let {name, value} = e.target;
+            let {value} = e.target;
             this.setState({
               changecurrency: value
             
@@ -72,7 +72,7 @@ class currconv extends Component {
 
 
             CurrencyNameToConvert(e) {
-                let {name, value} = e.target;
+                let {value} = e.target;
                 this.setState({
                     currencytoconvert: value
                 
