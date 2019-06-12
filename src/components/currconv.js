@@ -10,9 +10,11 @@ class currconv extends Component {
         loading:true,
         isOpen: false,
         currency:[],
+        tmp:[],
         changevalue:100,
         changecurrency:"USD",
-        currencytoconvert:""
+        currencytoconvert:"USD",
+        result:100
      }
 
      constructor(props) {
@@ -22,6 +24,7 @@ class currconv extends Component {
     
         this.onChangeCurrencyInput = this.onChangeCurrencyInput.bind(this);
         this.onChangeSelectCurrency = this.onChangeSelectCurrency.bind(this);
+        this.CurrencyNameToConvert = this.CurrencyNameToConvert.bind(this);
         this.Convert = this.Convert.bind(this);
 
         
@@ -34,16 +37,21 @@ class currconv extends Component {
          const url ='https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json';
         axios.get(url).then(
             (res)=>{
-                this.setState({currency:res.data});
-                console.log("currency:",this.currency);
+                this.setState({currency: res.data});
+                let tmp;
+                //res.data.map((currency, key) =>(currency));
+              
+               
             },
+            
             (err)=>{
                 console.log('Error upload data------',err.response.data);
             }
-        )
+        );
 
          
      }
+    
 
 
      onChangeCurrencyInput(e) {
@@ -69,43 +77,78 @@ class currconv extends Component {
             }
 
 
+            CurrencyNameToConvert(e) {
+                let {name, value} = e.target;
+                console.log(value);
+                this.setState({
+                    currencytoconvert: value
+                
+                });
+                
+                }
+
+
+
+
             Convert(){
-                console.log(this.currency);
-             let convertvalue=this.changevalue;
+             let currencyarr=this.state.currency.map((currency, key) =>(currency)); 
+             let convertvalue=this.state.changevalue;
              let changecurrency=this.state.changecurrency;
              let currencytoconvert=this.state.currencytoconvert;
-             let convertedvalue=(convertvalue*this.currency.filter(x => x.cc === this.changecurrency).rate)/this.currency.filter(x => x.cc === this.currencytoconvert)[0].rate;
-             console.log(convertedvalue);
+            
+             let convertedvalue=(convertvalue*currencyarr.find(x => x.cc === changecurrency).rate)/currencyarr.find(x => x.cc === currencytoconvert).rate;
+             this.setState({result:convertedvalue});
+            
             }
     render() { 
     
      console.log(this.currency);
       return(
-              <div>
-              <h6>Change</h6>
-              <input type="number" onChange={this.onChangeCurrencyInput} value="100"></input>
-                  <div className="drop-down">
-                      <select onChange={this.onChangeSelectCurrency}>
-                          {this.state.currency.map((currency, key) => <option key={key} >{currency.cc}</option>)}
-                      </select>
-                  </div>
-              <h6>Get</h6>
-              <input type="text" readOnly value="1"></input>    
-              
-              <div className="drop-down">
-                      <select>
-                          {this.state.currency.map((currency, key) => <option key={key} >{currency.cc}</option>)}
-                      </select>
-             </div>
-             
-             <button onClick={this.Convert}>Get </button>
-             </div>
+            <div className="container">
+
+                <div className="row justify-content-center">
+                    <div>
+                        <h6>Change:</h6>
+                        <input type="number" value={this.state.changevalue} onChange={this.onChangeCurrencyInput} ></input>
+
+                    </div>
 
 
-          
-      );
+                    <div style={{ marginTop: "2rem", marginLeft: "2rem" }} className="drop-down">
+                        <select onChange={this.onChangeSelectCurrency}>
+                            {this.state.currency.map((currency, key) => <option key={key} >{currency.cc}</option>)}
+                        </select>
+                    </div>
+
+                    {/* <i className="fa-angle-double-right"></i> */}
+                   
+                  
+
+                    <div style={{ marginLeft: "2rem" }}>
+                        <h6>Result:</h6>
+                        <input type="text" readOnly value={this.state.result}></input>
+                    </div>
+
+                    <div className="drop-down">
+                        <select style={{ marginTop: "2rem", marginLeft: "2rem" }} onChange={this.CurrencyNameToConvert}>
+                            {this.state.currency.map((currency, key) => <option key={key} >{currency.cc}</option>)}
+                        </select>
+                    </div>
+
+
+                </div>
+
+
+                <div style={{marginTop:"4rem"}} className="row justify-content-center">
+                    <button onClick={this.Convert}>Get result</button>
+                </div>
+
+            </div>
+
+
+        );
 
     }
 }
- 
+
 export default currconv;
